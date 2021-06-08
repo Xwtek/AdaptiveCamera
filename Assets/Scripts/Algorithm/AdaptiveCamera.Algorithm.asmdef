@@ -1,0 +1,18 @@
+{
+    "name": "AdaptiveCamera.Algorithm",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:f136c650832611aeab16e326731563b1",
+        "GUID:cd1a3f81b79d1ec278b92adf80aaed01"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

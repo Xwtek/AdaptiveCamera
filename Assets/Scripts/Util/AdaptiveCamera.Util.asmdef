@@ -1,0 +1,17 @@
+{
+    "name": "AdaptiveCamera.Util",
+    "rootNamespace": "AdaptiveCamera.Util",
+    "references": [
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:f136c650832611aeab16e326731563b1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
