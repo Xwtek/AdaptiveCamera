@@ -30,6 +30,7 @@ public class AdaptiveCameraBrain : CameraController
         mainCamera = GetComponent<Camera>();
         player = NoahController.Instance.reference;
         coroutine.Initialize();
+        constraints.Register(focusables);
     }
     int frame = 0;
     bool processed = true;
@@ -77,6 +78,7 @@ public class AdaptiveCameraBrain : CameraController
     }
     public void OnDestroy()
     {
+        constraints.Deregister(focusables);
         coroutine.Dispose();
         constraints.Dispose();
         tempConstraints?.Dispose();

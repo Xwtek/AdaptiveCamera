@@ -4,6 +4,7 @@ using System;
 public class DialogManager : MonoBehaviour {
     public GameOverDialog gameOver;
     public MenuDialog menuDialog;
+    public WinDialog winDialog;
     private void Awake() {
         instance = this;
         gameOver.Init();
@@ -12,9 +13,11 @@ public class DialogManager : MonoBehaviour {
     private void OnDestroy() {
         instance = null;
         GameEvents.OnDie.RemoveListener(GameOver);
+        GameEvents.OnWin.RemoveListener(Win);
     }
     private void Start() {
         GameEvents.OnDie.AddListener(GameOver);
+        GameEvents.OnWin.AddListener(Win);
     }
     private void Update() {
         if(Input.GetButtonDown("Cancel")){
@@ -34,5 +37,9 @@ public class DialogManager : MonoBehaviour {
     private void GameOver(){
         Dialog = gameOver;
     }
+    private void Win(){
+        Dialog = winDialog;
+    }
+
     public static DialogManager instance { get; private set; }
 }

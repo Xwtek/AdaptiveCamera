@@ -10,6 +10,7 @@ public class NoahController : MonoBehaviour, ISaveable{
     public float2 Move { get; private set; }
     public float maxRotationSpeed;
     public float MaxRotationPerFrame => (AdaptiveCameraBrain.Instance.milisecondPerRound?? Time.deltaTime) * Mathf.Deg2Rad * maxRotationSpeed / 1000;
+
     public static NoahController Instance { get; private set; }
 
     public string type =>  "Character";
@@ -22,14 +23,17 @@ public class NoahController : MonoBehaviour, ISaveable{
     public RPGCharacterController controller;
     public EnemyKiller sword;
     public GameObject shotPrefab;
+    private bool win;
     public void Awake(){
         Instance = this;
         GameEvents.OnDie.AddListener(Die);
+        GameEvents.OnWin.AddListener(Won);
         SaveState.Register(this);
     }
     private void Start()
     {
         controller = GetComponent<RPGCharacterController>();
+        
         SetUpRestore();
     }
     void Update()
@@ -41,7 +45,7 @@ public class NoahController : MonoBehaviour, ISaveable{
         if(transform.position.y < -5 && !dead) GameEvents.OnDie.Invoke();
     }
     void Moving(float2 input){
-        if(dead||CameraControl.Instance.state == CameraState.Shoot){
+        if(dead||win||CameraControl.Instance.state == CameraState.Shoot){
             controller.SetMoveInput(Vector3.zero);
             return;
         }
@@ -126,8 +130,12 @@ public class NoahController : MonoBehaviour, ISaveable{
         dead = true;
         controller.Death();
     }
+    private void Won(){
+        win = true;
+    }
     private void OnDestroy() {
         GameEvents.OnDie.RemoveListener(Die);
+        GameEvents.OnWin.RemoveListener(Won);
         SaveState.Deregister(this);
     }
 

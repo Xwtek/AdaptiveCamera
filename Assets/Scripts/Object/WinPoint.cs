@@ -1,7 +1,9 @@
 using UnityEngine;
 
-public class WinBlock : MonoBehaviour {
-    private void Win() {
+using UnityEngine;
+
+public class WinPoint : MonoBehaviour {
+    public void Win(){
         GameEvents.OnWin.Invoke();
     }
 }

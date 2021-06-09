@@ -69,6 +69,7 @@ public class EnemyController : MonoBehaviour
     private void Revive(){
         nav.enabled = true;
         dying = false;
+        gameObject.SetActive(true);
         anim.SetTrigger("Revive");
     }
 }

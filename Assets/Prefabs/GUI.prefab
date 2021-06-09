@@ -673,6 +673,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameOver: {fileID: 9088793050937064603}
   menuDialog: {fileID: 3776981114050447349}
+  winDialog: {fileID: 1377026413169897326}
 --- !u!1001 &207327916441071611
 PrefabInstance:
   m_ObjectHideFlags: 0

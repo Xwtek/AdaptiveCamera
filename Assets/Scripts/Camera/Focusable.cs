@@ -5,9 +5,9 @@ using Unity.Mathematics;
 using AdaptiveCamera.Util;
 using AdaptiveCamera.Data;
 [System.Serializable]
-public class Focusable : MonoBehaviour, IConstraint
+public class Focusable : MonoBehaviour
 {
-    private Collider mainCollider;
+    public Collider mainCollider;
     public Renderer m_Renderer;
     internal float sortOrder;
     public bool CanBeFocused{ get; private set; }
@@ -18,9 +18,7 @@ public class Focusable : MonoBehaviour, IConstraint
     // Start is called before the first frame update
     void Start()
     {
-        mainCollider = GetComponent<Collider>();
         AdaptiveCameraBrain.Instance.focusables.Register(this);
-        AdaptiveCameraBrain.Instance.constraints.Register(this);
     }
     // Update is called once per frame
     void Update()
@@ -37,35 +35,17 @@ public class Focusable : MonoBehaviour, IConstraint
         else{
             var playerLoc = AdaptiveCameraBrain.Instance.transform.position;
             var dir = transform.position - playerLoc;
-            if(Physics.Raycast(playerLoc, dir.normalized, out var hitInfo, dir.magnitude*1.1f, ~4, QueryTriggerInteraction.Ignore)){
+            var layer = LayerMask.GetMask("Ignore Raycast", "Player");
+            if(Physics.Raycast(playerLoc, dir.normalized, out var hitInfo, Mathf.Infinity, ~layer)){
                 CanBeFocused = hitInfo.collider == mainCollider;
+                if(!CanBeFocused && transform.parent.name!="Terrain")Debug.Log("Orig: " + transform.parent.name + ", Pos: " + gameObject.transform.position + ", Hits: " + hitInfo.collider.name + ", Pos: " + hitInfo.point + ", Player:" + playerLoc);
             }else{
                 CanBeFocused = false;
             }
         }
     }
-    void OnEnable(){
-        AdaptiveCameraBrain.Instance?.focusables.Register(this);
-        AdaptiveCameraBrain.Instance?.constraints.Register(this);
-    }
-    void OnDisable(){
+    private void OnDisable() {
         potentialFocusable = false;
         CanBeFocused = false;
-        AdaptiveCameraBrain.Instance?.focusables.Deregister(this);
-        AdaptiveCameraBrain.Instance?.constraints.Deregister(this);
-    }
-    public int ConstraintCount => focused ? 1 : 0;
-    public List<ConstraintData> Constraints { get; private set; } = new List<ConstraintData>();
-    public void UpdateConstraints(){
-        Constraints.Clear();
-        if(focused && enabled){
-            Constraints.Add(
-                ConstraintUtil.MakeCameraAngleConstraint(
-                AdaptiveCameraBrain.Instance.focusables.cost,
-                ((float3)transform.position - (float3)AdaptiveCameraBrain.Instance.transform.position).xz,
-                math.min(30, NoahController.Instance.MaxRotationPerFrame),
-                ((float3)AdaptiveCameraBrain.Instance.transform.forward).xz)
-            );
-        }
     }
 }
