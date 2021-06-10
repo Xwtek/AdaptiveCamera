@@ -24,6 +24,7 @@ public class LinearMovement : MonoBehaviour, ISaveable
         targetDiff = transform.rotation * target;
         actualTarget = targetDiff + transform.position;
         length = target.magnitude;
+        this.rb = GetComponent<Rigidbody>();
         SaveState.Register(this);
     }
     private void OnDestroy() {
@@ -31,7 +32,6 @@ public class LinearMovement : MonoBehaviour, ISaveable
     }
     private void Start()
     {
-        this.rb = GetComponent<Rigidbody>();
         rb.position = (1 - start) * origin + start * actualTarget;
         originalState = State;
     }
@@ -82,8 +82,8 @@ public class LinearMovement : MonoBehaviour, ISaveable
         set {
             rb.velocity = value.velocity;
             rb.angularVelocity = value.angularVelocity;
-            rb.position = rb.position;
-            rb.rotation = rb.rotation;
+            rb.position = value.position;
+            rb.rotation = value.rotation;
             speed = value.speed;
             returnSpeed = value.returnSpeed;
         }

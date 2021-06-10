@@ -9,6 +9,7 @@ public class DialogManager : MonoBehaviour {
         instance = this;
         gameOver.Init();
         menuDialog.Init();
+        winDialog.Init();
     }
     private void OnDestroy() {
         instance = null;

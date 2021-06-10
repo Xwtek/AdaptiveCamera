@@ -8,6 +8,12 @@ public class RadialMovement : MonoBehaviour, ISaveable{
     private Quaternion originalRotation;
     public float speed;
     private Rigidbody rb;
+    private void Awake() {
+        SaveState.Register(this);
+    }
+    private void OnDestroy() {
+        SaveState.Deregister(this);
+    }
     private void Start() {
         actualCenter = center + this.transform.position;
         rb = GetComponent<Rigidbody>();

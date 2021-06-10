@@ -27,7 +27,7 @@ public class FocusableCollection : IConstraint
     public void Focus(Vector3 playerPosition)
     {
         Sort(playerPosition);
-        if(focusables[0].CanBeFocused){
+        if(focusables.Count>0 &&focusables[0].CanBeFocused){
             Current = focusables[0];
         }else{
             Current = null;
