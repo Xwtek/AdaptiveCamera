@@ -8,6 +8,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using AdaptiveCamera.Util;
+/*
 public class ConstraintJobTest
 {
     // A Test behaves as an ordinary method
@@ -112,12 +113,12 @@ public class ConstraintJobTest
             coro.BeginRound();
             yield return null;
         }
-        /*/
+        /*\
         var exec = coro.Run(new float3(2.4f, 0.6f, 3.3f),
             new float3(3f, 0f, 4f),
             constraints);
         while(exec.MoveNext()) yield return exec.Current;
-        //*/
+        //*\
         Debug.Log(coro.Best.Value.current);
         Assert.Less(math.length(coro.Best.Value.current.xz - new float2(3, 4)), 1.01f);
     }
@@ -135,3 +136,4 @@ public class ConstraintJobTest
         Assert.IsTrue(Mathf.Approximately(angle, 30));
     }
 }
+*/

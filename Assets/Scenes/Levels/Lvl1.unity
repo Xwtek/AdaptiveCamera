@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43949726, g: 0.48785567, b: 0.56808734, a: 1}
+  m_IndirectSpecularColor: {r: 0.4395012, g: 0.4878605, b: 0.56809336, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -883,9 +883,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a77f53653b6e9bc4bd72e50cccf986f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPoint: {x: 1.0277824, y: 24.492687, z: -59.252975}
+  startPoint: {x: 1.0277863, y: 24.492687, z: -59.253006}
   endPoint: {x: 25.72585, y: 41.10406, z: -94.53856}
-  curvePoint: {x: 20.251904, y: 31.754894, z: -74.76982}
+  curvePoint: {x: 20.251892, y: 31.75489, z: -74.76981}
   width: 10
   cameraPosition: 2
   cameraParam:
@@ -1746,6 +1746,18 @@ PrefabInstance:
     - target: {fileID: 1607550763, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: <id>k__BackingField
       value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.benchmarking.Test
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.candidatesPerRound
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.benchmarking.writeTo
+      value: /home/xwtek/benchmark/s1.csv
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571640, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: m_Name
@@ -2894,7 +2906,7 @@ MonoBehaviour:
   width: 10
   cameraPosition: 0
   cameraParam:
-    distance: 4
+    distance: 12
     followVantage: 0
     idealVantage: 0
   segmentCount: 10
@@ -2936,9 +2948,9 @@ MonoBehaviour:
   endPoint: {x: -61.060074, y: 9.513725, z: -64.50079}
   curvePoint: {x: -53.05761, y: 9.297951, z: -47.087402}
   width: 4
-  cameraPosition: 0
+  cameraPosition: 2
   cameraParam:
-    distance: 4
+    distance: 12
     followVantage: 0
     idealVantage: 0
   segmentCount: 10
@@ -2958,9 +2970,9 @@ MonoBehaviour:
   endPoint: {x: -63.886856, y: 18.979439, z: -108.12732}
   curvePoint: {x: -68.5841, y: 13.302126, z: -85.206085}
   width: 5
-  cameraPosition: 0
+  cameraPosition: 2
   cameraParam:
-    distance: 4
+    distance: 12
     followVantage: 0
     idealVantage: 0
   segmentCount: 10

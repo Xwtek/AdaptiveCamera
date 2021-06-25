@@ -6,6 +6,8 @@ using System.Diagnostics;
 using AdaptiveCamera.Data;
 using AdaptiveCamera.Algorithm;
 using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
 namespace AdaptiveCamera.Algorithm
 {
 
@@ -23,16 +25,17 @@ namespace AdaptiveCamera.Algorithm
         public long maxWork;
         public int octreeCubesToBeExamined;
         public int candidatesPerRound;
+        public float size;
+        public float frameCoherenceCost;
+
         private bool cancel = false;
         [HideInInspector]
         public bool finished = true;
-        public float size;
         public float accumulatedTime;
         public OctreeNode? Best { get; private set; } = null;
-        public float3? PreviousBest;
-        public float frameCoherenceCost;
         [System.Serializable]
-        public struct Debug{
+        public struct Debug
+        {
             public bool enableDebug;
             public float currentTotal;
 
@@ -48,9 +51,9 @@ namespace AdaptiveCamera.Algorithm
         private float3? newPlayerPos;
         private NativeArray<ConstraintData>? newConstraints;
         private JobHandle? jobHandle;
-        public IEnumerator Run(float3 initialConfiguration, float3 playerPos, NativeSlice<ConstraintData> constraints, bool disposeAfter = false)
+        public IEnumerator Run(float3 initialConfiguration, float3 playerPos, NativeSlice<ConstraintData> constraints)
         {
-            PreviousBest = Best?.current;
+            benchmarking.StartRound();
             this.finished = false;
             this.cancel = false;
             this.priorityQueue.Initialize(
@@ -65,7 +68,10 @@ namespace AdaptiveCamera.Algorithm
             frameWatch.Start();
             Best = null;
             var delta = new float3(0, 0, 0);
-            while (priorityQueue.Best.Value.pass < maxPasses && workWatch.ElapsedMilliseconds < maxWork){
+            var evaluatedOctree = 0;
+            var depth = -1;
+            while (priorityQueue.Best.Value.pass < maxPasses && workWatch.ElapsedMilliseconds < maxWork)
+            {
                 var splitCount = 8;
                 var numCandidates = math.min(candidates.Length / splitCount, priorityQueue.Count) * splitCount;
                 var candidateSlice = candidates.Slice(0, numCandidates);
@@ -78,6 +84,7 @@ namespace AdaptiveCamera.Algorithm
                 allJob.previousBest = initialConfiguration;
                 allJob.scale = scale;
                 allJob.splitCount = splitCount;
+                allJob.delta = delta;
                 jobHandle = allJob.Schedule();
                 JobHandle.ScheduleBatchedJobs();
                 while (!jobHandle.Value.IsCompleted) if (frameWatch.ElapsedMilliseconds > worktimePerFrame)
@@ -88,20 +95,25 @@ namespace AdaptiveCamera.Algorithm
                     }
                 jobHandle.Value.Complete();
                 if (cancel) break;
-                if(newPlayerPos.HasValue) {
+                if (newPlayerPos.HasValue)
+                {
                     delta = newPlayerPos.Value - playerPos;
                 }
-                if(newConstraints.HasValue){
+                if (newConstraints.HasValue)
+                {
                     constraints = newConstraints.Value;
                 }
                 if (Best == null || Best.Value.score > priorityQueue.Best.Value.score)
-                Best = priorityQueue.Best;
+                    Best = priorityQueue.Best;
                 if (debug)
                 {
-                    debug.evaluatedOctree++;
+                    debug.evaluatedOctree += numCandidates;
                 }
+                evaluatedOctree += numCandidates;
+                depth = Mathf.Max(Best.Value.pass, depth);
             }
             finished = true;
+            benchmarking.StopRound(evaluatedOctree, depth);
             if (debug)
             {
                 debug.passes = Best.Value.pass;
@@ -131,13 +143,16 @@ namespace AdaptiveCamera.Algorithm
             this.priorityQueue = new PriorityQueue(this.octreeCubesToBeExamined);
             this.candidates = new NativeArray<OctreeNode>(this.candidatesPerRound, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
-        public void Cancel(){
+        public void Cancel()
+        {
             cancel = true;
-            if(jobHandle.HasValue)jobHandle.Value.Complete();
+            if (jobHandle.HasValue) jobHandle.Value.Complete();
         }
-        public void Update(float3 newPlayerPos, NativeArray<ConstraintData> newConstraints ) {
+        public void Update(float3 newPlayerPos, NativeArray<ConstraintData> newConstraints)
+        {
             this.newPlayerPos = newPlayerPos;
-            if(this.newConstraints.HasValue){
+            if (this.newConstraints.HasValue)
+            {
                 jobHandle?.Complete();
                 this.newConstraints?.Dispose();
             }
@@ -151,5 +166,43 @@ namespace AdaptiveCamera.Algorithm
             this.priorityQueue.Dispose();
             this.candidates.Dispose();
         }
+        [System.Serializable]
+        public  class Benchmarking
+        {
+            public bool Test;
+            public bool Write;
+            public string writeTo;
+            public Stopwatch stopwatch;
+            public List<(long, int, int)> datas = new List<(long, int, int)>();
+            public void StopRound(int octreeNodesEvaluated, int depth)
+            {
+                if (!Test) goto write;
+                if(stopwatch == null) goto write;
+                stopwatch.Stop();
+                datas.Add((stopwatch.ElapsedMilliseconds, octreeNodesEvaluated, depth));
+                stopwatch = null;
+            write:
+                if(Write && !string.IsNullOrEmpty(writeTo)){
+                    using var file = new StreamWriter(writeTo);
+                    foreach(var data in datas){
+                        file.Write(data.Item1);
+                        file.Write(", ");
+                        file.Write(data.Item2);
+                        file.Write(", ");
+                        file.Write(data.Item3);
+                        file.WriteLine();
+                    }
+                    file.Flush();
+                }
+                Write = false;
+            }
+            public void StartRound()
+            {
+                if(!Test) return;
+                if(stopwatch == null) stopwatch = new Stopwatch();
+                stopwatch.Start();
+            }
+        }
+        public Benchmarking benchmarking = new Benchmarking();
     }
 }

@@ -5318,12 +5318,48 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 527116324}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: smoothing.Test
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.scale
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: smoothing.Write
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.maxWork
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: smoothing.writeTo
+      value: /home/xwtek/benchmark/s2.csv
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.maxPasses
+      value: 72
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: updateWhileSearching
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.debug.enableDebug
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.candidatesPerRound
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.benchmarking.writeTo
+      value: /home/xwtek/benchmark/s1.csv
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571640, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: m_Name

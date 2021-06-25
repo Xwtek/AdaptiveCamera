@@ -3,23 +3,23 @@ using System.Collections;
 using System;
 namespace AdaptiveCamera.Algorithm{
     [System.Serializable]
-    public class TargetAverager
+    public class Averager
     {
         [NonSerialized]
-        private float3[] pastTargets;
+        private float[] pastTargets;
         [NonSerialized]
         private int index=0;
         public int length=5;
         [NonSerialized]
         private int occupiedLength;
-        public float3? currentAverage;
-        public float3 Update(float3 point)
+        public float? currentAverage;
+        public float Update(float point)
         {
-            if (pastTargets == null) pastTargets = new float3[length];
+            if (pastTargets == null) pastTargets = new float[length];
             else if (length != pastTargets.Length)
             {
                 var old = pastTargets;
-                pastTargets = new float3[length];
+                pastTargets = new float[length];
                 Array.Copy(old, index, pastTargets, 0, math.min(old.Length - index, length));
                 if (old.Length - index < length) Array.Copy(old, 0, pastTargets, old.Length - index, math.min(index, length
                    - old.Length + index));

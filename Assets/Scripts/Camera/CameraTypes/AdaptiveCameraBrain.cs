@@ -4,37 +4,34 @@ using AdaptiveCamera.Algorithm;
 using Unity.Mathematics;
 using AdaptiveCamera.Util;
 using Unity.Collections;
-using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Diagnostics;
 
 [RequireComponent(typeof(Camera))]
 public class AdaptiveCameraBrain : CameraController
 {
-    public PID cameraPID = new PID();
     public ConstraintCollection constraints = new ConstraintCollection();
     public FocusableCollection focusables = new FocusableCollection();
     [InspectorName("AdaptiveCameraMode")]
     public AdaptiveCameraCoroutine coroutine = new AdaptiveCameraCoroutine(500, 16, 0.75f, 12, 1000 / 24, 1000 / 24);
     public FollowCamera followCamera;
-    public TargetAverager averager = new TargetAverager();
-    public bool updateWhileSearching;
-    private Camera mainCamera;
     private Transform player;
-    private TargetAverager miliPerRound = new TargetAverager{length = 20};
-    public float? milisecondPerRound => miliPerRound.currentAverage?.x;
+    private Averager miliPerRound = new Averager { length = 20 };
+    public float? milisecondPerRound => miliPerRound.currentAverage;
+
+    bool processed = true;
+    NativeArray<ConstraintData>? tempConstraints;
     public void Awake()
     {
         Instance = this;
     }
     public void Start()
     {
-        mainCamera = GetComponent<Camera>();
         player = NoahController.Instance.reference;
         coroutine.Initialize();
         constraints.Register(focusables);
     }
-    int frame = 0;
-    bool processed = true;
-    NativeArray<ConstraintData>? tempConstraints;
     public override void OnCameraUpdate()
     {
         var justProcessed = false;
@@ -46,13 +43,13 @@ public class AdaptiveCameraBrain : CameraController
             var constraintArray = constraints.GetConstraintArray();
             if (constraintArray == null) return;
             StartCoroutine(coroutine.Run(
-                mainCamera.transform.position,
+                cameraUsed.transform.position,
                 player.position,
                 constraintArray.Value));
+            smoothing.StartRound(NoahController.Instance.reference.position - transform.position);
         }
-        frame++;
         coroutine.accumulatedTime += Time.deltaTime;
-        if (updateWhileSearching && !justProcessed)
+        if (!justProcessed)
         {
             var newConstraint = constraints.GetTempConstraintArray();
             coroutine.Update(player.position, newConstraint);
@@ -61,19 +58,12 @@ public class AdaptiveCameraBrain : CameraController
         if (coroutine.finished && !coroutine.IsCancelled)
         {
             var target = coroutine.Best.Value.current.xyz;
-            //target.w = coroutine.Best.Value.current.fov;
-            target = averager.Update(target);
-            var moved = mainCamera.transform;
-            var origin = ((float3)moved.position).xyz;
-            //origin.w = mainCamera.fieldOfView;
-            var smooth = cameraPID.Update(target, origin, coroutine.accumulatedTime) + origin;
-            //mainCamera.fieldOfView = smooth.w;
-            //Debug.Log(smooth.xyz);
-            mainCamera.transform.SetPositionAndRotation(smooth.xyz, Quaternion.LookRotation((float3)player.position - smooth.xyz, Vector3.up));
-            frame = 0;
-            if(followCamera != null) followCamera.ApplyOffset();
+            cameraUsed.transform.SetPositionAndRotation(target.xyz, Quaternion.LookRotation((float3)player.position - target.xyz, Vector3.up));
+            if (followCamera != null) followCamera.ApplyOffset();
+            miliPerRound.Update(coroutine.accumulatedTime);
             coroutine.accumulatedTime = 0;
             processed = true;
+            smoothing.StopRound(NoahController.Instance.reference.position - transform.position);
         }
     }
     public void OnDestroy()
@@ -81,21 +71,58 @@ public class AdaptiveCameraBrain : CameraController
         constraints.Deregister(focusables);
         coroutine.Dispose();
         constraints.Dispose();
-        tempConstraints?.Dispose();
         Instance = null;
     }
 
     protected override void OnCameraEnabled()
     {
-        if(followCamera!=null) followCamera.ResetOffset();
+        if (followCamera != null) followCamera.ResetOffset();
         processed = true;
     }
 
     protected override void OnCameraDisabled()
     {
         coroutine.Cancel();
-        tempConstraints?.Dispose();
     }
 
     public static AdaptiveCameraBrain Instance { get; private set; }
+        [System.Serializable]
+        public  class Smoothing
+        {
+            public bool Test;
+            public bool Write;
+            public string writeTo;
+            public Stopwatch stopwatch;
+            public List<float> datas = new List<float>();
+            float3 origin;
+            public void StopRound(float3 currSituation)
+            {
+                if (!Test) goto write;
+                if(stopwatch == null) goto write;
+                stopwatch.Stop();
+                var result = math.length(currSituation - origin) / stopwatch.ElapsedMilliseconds;
+                if(result == 0 || !math.isfinite(result)) goto write;
+                datas.Add(result);
+                stopwatch = null;
+            write:
+                if(Write && !string.IsNullOrEmpty(writeTo)){
+                    using var file = new StreamWriter(writeTo);
+                    foreach(var data in datas){
+                        file.Write(data);
+                        file.WriteLine();
+                    }
+                    file.Flush();
+                    datas.Clear();
+                }
+                Write = false;
+            }
+            public void StartRound(float3 origin)
+            {
+                if(!Test) return;
+                stopwatch = new Stopwatch();
+                stopwatch.Start();
+                this.origin = origin;
+            }
+        }
+        public Smoothing smoothing = new Smoothing();
 }

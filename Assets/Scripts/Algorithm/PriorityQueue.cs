@@ -2,7 +2,8 @@ using Unity.Mathematics;
 using AdaptiveCamera.Data;
 using System;
 using Unity.Collections;
-namespace AdaptiveCamera.Algorithm{
+namespace AdaptiveCamera.Algorithm
+{
     public struct PriorityQueue
     {
         // Priority queue of Octrees currently being searched
@@ -12,7 +13,8 @@ namespace AdaptiveCamera.Algorithm{
         // The number of octrees being given score.
 
         // How many octrees in the queue
-        public int Count{
+        public int Count
+        {
             get => currentCapacity[0];
             private set => currentCapacity[0] = value;
         }
@@ -23,8 +25,8 @@ namespace AdaptiveCamera.Algorithm{
         public void AddMany(NativeSlice<OctreeNode> newCubes)
         {
             if (newCubes.Length == 0) return;
-            int leftParent = math.max(0,GetParentIndex(this.Count));
-            int rightParent = GetParentIndex(this.Count+newCubes.Length-1);
+            int leftParent = math.max(0, GetParentIndex(this.Count));
+            int rightParent = GetParentIndex(this.Count + newCubes.Length - 1);
             while (rightParent >= 0)
             {
                 for (var i = rightParent; i >= leftParent; i--)
@@ -37,7 +39,8 @@ namespace AdaptiveCamera.Algorithm{
             if (Count != backingArray.Length)
             {
                 var count = math.min(backingArray.Length - Count, newCubes.Length);
-                for (var i = 0; i < count; i++){
+                for (var i = 0; i < count; i++)
+                {
                     backingArray[i + Count] = newCubes[i];
                 }
             }
@@ -59,7 +62,8 @@ namespace AdaptiveCamera.Algorithm{
             currentCapacity = new NativeArray<int>(1, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             Count = 0;
         }
-        public void Dispose(){
+        public void Dispose()
+        {
             backingArray.Dispose();
             currentCapacity.Dispose();
         }
@@ -76,7 +80,7 @@ namespace AdaptiveCamera.Algorithm{
             {
                 var child = GetLeftChild(position);
                 if (child >= length) break;
-                if (child + 1 < length && GetScore(extension, child+1) < GetScore(extension, child)) child += 1;
+                if (child + 1 < length && GetScore(extension, child + 1) < GetScore(extension, child)) child += 1;
                 if (GetScore(extension, child) >= GetScore(extension, position)) break;
                 Swap(extension, child, position);
                 position = child;
@@ -89,7 +93,7 @@ namespace AdaptiveCamera.Algorithm{
             {
                 (firstIndex, secondIndex) = (secondIndex, firstIndex);
             }
-            if (secondIndex < Count || ! extension.HasValue)
+            if (secondIndex < Count || !extension.HasValue)
             {
                 var temp = backingArray[secondIndex];
                 backingArray[secondIndex] = backingArray[firstIndex];
@@ -128,33 +132,39 @@ namespace AdaptiveCamera.Algorithm{
         internal static int GetParentIndex(int current) => (current + 1) / 2 - 1;
         internal static int GetLeftChild(int current) => current * 2 + 1;
         #region Testing
-        public bool IsAHeap(){
-            for(int i =0; true; i++){
-                var child = i*2+1;
-                if(child >= Count) break;
-                if(backingArray[child].score < backingArray[i].score) return false;
-                if(child+1 >= Count) continue;
-                if(backingArray[child+1].score < backingArray[i].score) return false;
+        public bool IsAHeap()
+        {
+            for (int i = 0; true; i++)
+            {
+                var child = i * 2 + 1;
+                if (child >= Count) break;
+                if (backingArray[child].score < backingArray[i].score) return false;
+                if (child + 1 >= Count) continue;
+                if (backingArray[child + 1].score < backingArray[i].score) return false;
             }
             return true;
         }
-        public bool IsAHeap(NativeArray<OctreeNode> extension, int length){
-            for(int i =0; true; i++){
-                var child = i*2+1;
-                if(child >= Count+length) break;
-                if(GetScore(extension, i) > GetScore(extension, child)) return false;
-                if(child+1 >= Count+length) continue;
-                if(GetScore(extension, i) > GetScore(extension, child+1)) return false;
+        public bool IsAHeap(NativeArray<OctreeNode> extension, int length)
+        {
+            for (int i = 0; true; i++)
+            {
+                var child = i * 2 + 1;
+                if (child >= Count + length) break;
+                if (GetScore(extension, i) > GetScore(extension, child)) return false;
+                if (child + 1 >= Count + length) continue;
+                if (GetScore(extension, i) > GetScore(extension, child + 1)) return false;
             }
             return true;
         }
-        internal float[] Scores(){
+        internal float[] Scores()
+        {
             var list = new float[Count];
-            for(int i = 0; i < Count;i++){
+            for (int i = 0; i < Count; i++)
+            {
                 list[i] = backingArray[i].score;
             }
             return list;
         }
-#endregion
+        #endregion
     }
 }

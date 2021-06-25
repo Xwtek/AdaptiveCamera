@@ -18,7 +18,6 @@ public struct LineJob : IJob
     public float3 playerPosition;
     [ReadOnly]
     public float2 playerSpeed;
-    public float minSpeed;
     public void Execute()
     {
         var playerDir = math.normalize(playerSpeed);

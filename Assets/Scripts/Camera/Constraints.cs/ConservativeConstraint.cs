@@ -12,11 +12,6 @@ class ConservativeConstraint : MonoBehaviour, IConstraint
     {
         var transformToBeUsed = AdaptiveCameraBrain.Instance.transform;
         Constraints.Clear();
-        //constraintDatas.Add(transformToBeUsed.MakeFOVConstraint(60, cost));
-        var viewpointConstraint = transformToBeUsed.MakeViewpointConstraint(0, cost);
-        viewpointConstraint.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-        viewpointConstraint.type = ConstraintType.CAMERA_ANGLE;
-        //constraintDatas.Add(viewpointConstraint);
         Constraints.Add(transformToBeUsed.MakeDistanceConstraint(0, distanceCost, 1));
     }
     public void OnEnable()

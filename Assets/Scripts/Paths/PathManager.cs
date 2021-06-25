@@ -87,7 +87,6 @@ public class PathManager : MonoBehaviour, IConstraint{
                 cameraParam = _cp,
                 playerPosition = NoahController.Instance.transform.position,
                 playerSpeed = groundVelocity,
-                minSpeed = minSpeed,
             };
             jobHandle = job.Value.Schedule();
         }

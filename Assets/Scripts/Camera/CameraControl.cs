@@ -125,26 +125,21 @@ public class CameraControl : MonoBehaviour, ISaveable
         state = CameraState.Shoot;
         ActiveCamera = shootCamera;
     }
-
     void ISaveable.Load(SaveItemReader reader)
     {
         state = reader.Load<CameraState>("State");
         followCamera.ResetOffset();
     }
-
     void ISaveable.Save(SaveItemWriter writer)
     {
         writer.Save("State", state);
     }
-
     void ISaveable.Restore()
     {
         state = CameraState.Default;
         followCamera.ResetOffset();
     }
-
     public static CameraControl Instance{ get; private set; }
-
     public string type => "CameraControl";
     [field: SerializeField]
     public int id { get; set; }
