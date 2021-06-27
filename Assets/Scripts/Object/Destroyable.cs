@@ -4,12 +4,6 @@ public class Destroyable : MonoBehaviour, ISaveable {
     public string type => "Destroyable";
     [field: SerializeField]
     public int id{ get; set; }
-    private void Awake() {
-        SaveState.Register(this);
-    }
-    private void OnDestroy() {
-        SaveState.Deregister(this);
-    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Projectile")
@@ -25,14 +19,14 @@ public class Destroyable : MonoBehaviour, ISaveable {
         }
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                public void Load(SaveItemReader reader)
+    public void Load(SaveItemReader reader)
     {
         gameObject.SetActive(!reader.Load<bool>("Destroyed"));
     }
 
     public void Save(SaveItemWriter writer)
     {
-        writer.Save("Destroyed", !gameObject.activeSelf);
+        writer.Save("Destroyed", gameObject.activeSelf);
     }
 
     public void Restore()

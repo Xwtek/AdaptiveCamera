@@ -16,5 +16,4 @@ public class StartWhenOn : MonoBehaviour {
         var cond = (math.abs(pos.xz) - size)<0;
         movement.enabled = cond.x && cond.y && pos.y > 0;
     }
-    
 }
