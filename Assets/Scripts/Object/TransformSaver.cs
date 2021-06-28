@@ -23,4 +23,10 @@ public class TransformSaver : MonoBehaviour, ISaveable
         writer.Save("Position", transform.position);
         writer.Save("Rotation", transform.rotation);
     }
+    private void Awake() {
+        SaveState.Register(this);
+    }
+    private void OnDestroy() {
+        SaveState.Deregister(this);
+    }
 }

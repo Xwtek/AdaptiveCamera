@@ -29,6 +29,7 @@ public class CameraControl : MonoBehaviour, ISaveable
     }
     private void Awake(){
         Instance = this;
+        SaveState.Register(this);
     }
     private void Start()
     {
@@ -127,17 +128,16 @@ public class CameraControl : MonoBehaviour, ISaveable
     void ISaveable.Load(SaveItemReader reader)
     {
         state = reader.Load<CameraState>("State");
-        transform.SetPositionAndRotation(reader.Load<Vector3>("Position"), reader.Load<Quaternion>("Rotation"));
+        followCamera.ResetOffset();
     }
     void ISaveable.Save(SaveItemWriter writer)
     {
         writer.Save("State", state);
-        writer.Save("Position", transform.position);
-        writer.Save("Rotation", transform.rotation);
     }
     void ISaveable.Restore()
     {
-        throw new System.NotImplementedException();
+        state = CameraState.Default;
+        followCamera.ResetOffset();
     }
     public static CameraControl Instance{ get; private set; }
     public string type => "CameraControl";
