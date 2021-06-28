@@ -5319,7 +5319,7 @@ PrefabInstance:
       objectReference: {fileID: 527116324}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.size
-      value: 7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.Test
@@ -5327,7 +5327,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.scale
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.Write
@@ -5335,7 +5335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.maxWork
-      value: 120
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.writeTo
@@ -5343,7 +5343,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.maxPasses
-      value: 72
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: updateWhileSearching
@@ -5355,7 +5355,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.candidatesPerRound
-      value: 50
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.benchmarking.writeTo
