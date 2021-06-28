@@ -56,6 +56,7 @@ public class PathManager : MonoBehaviour, IConstraint{
         _van = new NativeArray<float>(1, Allocator.Persistent);
     }
     public void Start(){
+        AdaptiveCameraBrain.Instance?.constraints.Register(this);
         var tempList = new List<Line>();
         var scene = SceneManager.GetActiveScene();
         foreach (var go in scene.GetRootGameObjects())
