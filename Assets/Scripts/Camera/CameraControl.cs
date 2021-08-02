@@ -129,6 +129,7 @@ public class CameraControl : MonoBehaviour, ISaveable
     {
         state = reader.Load<CameraState>("State");
         followCamera.ResetOffset();
+        brain.ResetCamera();
     }
     void ISaveable.Save(SaveItemWriter writer)
     {
@@ -138,6 +139,7 @@ public class CameraControl : MonoBehaviour, ISaveable
     {
         state = CameraState.Default;
         followCamera.ResetOffset();
+        brain.ResetCamera();
     }
     public static CameraControl Instance{ get; private set; }
     public string type => "CameraControl";

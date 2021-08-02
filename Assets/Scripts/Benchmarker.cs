@@ -56,6 +56,7 @@ public class Benchmarker : MonoBehaviour
     private void Write(){
         if(!string.IsNullOrEmpty(writeTo)){
             using var file = new StreamWriter(writeTo);
+            file.WriteLine("Speed,Deviation");
             foreach(var (data, dist) in datas.Zip(distances, (a, b)=>(a,b))){
                 file.Write(data);
                 file.Write(", ");

@@ -1920,20 +1920,10 @@ MonoBehaviour:
   bestRotation:
     x: 0
     y: 0
-  cameraParam:
-    distance: 0
-    followVantage: 0
-    idealVantage: 0
-  vantage: 0
-  currentRotation:
-    x: 0
-    y: 0
-    z: 0
   minSpeed: 0
   distanceCost: 100
   vantageCost: 100
   cost: 300
-  dot: 0
 --- !u!4 &780677563
 Transform:
   m_ObjectHideFlags: 0
@@ -5319,23 +5309,31 @@ PrefabInstance:
       objectReference: {fileID: 527116324}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.size
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.Test
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.onJob
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.scale
-      value: 0.5
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.Write
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
+      propertyPath: coroutine.config
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.maxWork
-      value: 40
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: smoothing.writeTo
@@ -5343,7 +5341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.maxPasses
-      value: 24
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: updateWhileSearching
@@ -5351,15 +5349,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.debug.enableDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.candidatesPerRound
-      value: 20
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571636, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: coroutine.benchmarking.writeTo
-      value: /home/xwtek/benchmark/s1.csv
+      value: /home/xwtek/benchmark/speed.csv
       objectReference: {fileID: 0}
     - target: {fileID: 2332040217244571640, guid: e5dbb3f12e562f56181a58221e038e3d, type: 3}
       propertyPath: m_Name

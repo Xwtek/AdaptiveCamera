@@ -22,8 +22,8 @@ public class PathManager : MonoBehaviour, IConstraint{
     private Line relevantLine;
     [SerializeField]
     private bool lineExists;
-    public Line? RelevantLine {
-        get => lineExists ? relevantLine : null as Line?; private set
+    private Line? RelevantLine {
+        get => lineExists ? relevantLine : null as Line?; set
         {
             if (value.HasValue) relevantLine = value.Value;
             lineExists = value.HasValue;
@@ -32,22 +32,22 @@ public class PathManager : MonoBehaviour, IConstraint{
     [NonSerialized]
     private NativeArray<float2> _br;
     [SerializeField]
-    public float2 bestRotation;
-    public float2? BestRotation {
-        get => lineExists ? bestRotation : null as float2?; private set
+    private float2 bestRotation;
+    private float2? BestRotation {
+        get => lineExists ? bestRotation : null as float2?; set
         {
             lineExists = value.HasValue;
             if (value.HasValue) bestRotation = value.Value;
         }
     }
-    public OptimalCameraParam cameraParam;
-    public float vantage;
-    public float3 currentRotation;
+    private OptimalCameraParam cameraParam;
+    private float vantage;
     private LineJob? job;
     private JobHandle? jobHandle;
     public float minSpeed;
     public float distanceCost;
     public float vantageCost;
+    public float cost;
     public void Awake(){
         _sc = new NativeArray<bool>(1, Allocator.Persistent);
         _rl = new NativeArray<Line>(1, Allocator.Persistent);
@@ -72,7 +72,6 @@ public class PathManager : MonoBehaviour, IConstraint{
         }
         lines = tempList.ToNativeArray(Allocator.Persistent);
     }
-    float3 prevGroundVelocity;
 
     public void Update(){
         var groundVelocity = NoahController.Instance.Move;
@@ -124,15 +123,11 @@ public class PathManager : MonoBehaviour, IConstraint{
     public void OnDisable(){
         AdaptiveCameraBrain.Instance?.constraints.Deregister(this);
     }
-    public float cost;
-    public float dot;
     public void UpdateConstraints(){
         Constraints.Clear();
         if(RelevantLine.HasValue && CameraControl.Instance.state == CameraState.Default){
             var rotation = BestRotation.Value;
-            dot = math.dot(NoahController.Instance.Move, rotation);
             var constraintData = ConstraintUtil.MakeCameraAngleConstraint(cost, BestRotation.Value, math.min(math.radians(30),NoahController.Instance.MaxRotationPerFrame), ((float3)AdaptiveCameraBrain.Instance.transform.forward).xz);
-            currentRotation = math.forward(constraintData.rotation);
             Constraints.Add(constraintData);
             Constraints.Add(NoahController.Instance.reference.MakeDistanceConstraint(cameraParam.distance, distanceCost, 1f));
             switch(cameraParam.followVantage){

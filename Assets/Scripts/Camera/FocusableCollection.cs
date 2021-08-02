@@ -5,7 +5,7 @@ using AdaptiveCamera.Util;
 using Unity.Mathematics;
 [System.Serializable]
 public class FocusableCollection : IConstraint
-{
+{   
     public int cost;
     public Focusable Current { get;
     private set; }
@@ -14,39 +14,47 @@ public class FocusableCollection : IConstraint
 
     List<Focusable> focusables = new List<Focusable>();
     #region Registration
-    public void Register(Focusable focusable)
-    {
-        if (!focusables.Contains(focusable)) focusables.Add(focusable);
-    }
-    public void Deregister(Focusable focusable)
-    {
-        if (focusables.Contains(focusable)) focusables.Remove(focusable);
-    }
+public void Register(Focusable focusable)
+{
+    if (!focusables.Contains(focusable)) focusables.Add(focusable);
+}
+public void Deregister(Focusable focusable)
+{
+    if (focusables.Contains(focusable)) focusables.Remove(focusable);
+}
     #endregion
     #region Focus Algorithm
-    public void Focus(Vector3 playerPosition)
-    {
-        Sort(playerPosition);
-        if(focusables.Count>0 &&focusables[0].CanBeFocused){
-            Current = focusables[0];
-        }else{
-            Current = null;
-        }
-    }
-    public void Defocus()
-    {
+public void Focus(Vector3 playerPosition)
+{
+    Sort(playerPosition);
+    if(focusables.Count>0 &&focusables[0].CanBeFocused){
+        Current = focusables[0];
+    }else{
         Current = null;
     }
-    public void Prev(Vector3 playerPosition)
-    {
-        Sort(playerPosition);
+}
+public void Defocus()
+{
+    Current = null;
+}
+public void Prev(Vector3 playerPosition)
+{
+    Sort(playerPosition);
+    NextByAngle(playerPosition, true);
+}
+public void Next(Vector3 playerPosition)
+{
+    Sort(playerPosition);
+    NextByAngle(playerPosition, false);
+}
+public void Maintain(Vector3 playerPosition)
+{
+    Sort(playerPosition);
+    if(!Current.CanBeFocused){
         NextByAngle(playerPosition, true);
     }
-    public void Next(Vector3 playerPosition)
-    {
-        Sort(playerPosition);
-        NextByAngle(playerPosition, false);
-    }
+}
+    #endregion
     private void NextByAngle(Vector3 playerPosition, bool clockwise)
     {
         var originalPos = Current.transform.position;
@@ -72,25 +80,17 @@ public class FocusableCollection : IConstraint
         }
         if (!Current.CanBeFocused || bestFoc != null) Current = bestFoc;
     }
-    public void Maintain(Vector3 playerPosition)
-    {
-        Sort(playerPosition);
-        if(!Current.CanBeFocused){
-            NextByAngle(playerPosition, true);
-        }
-    }
-    #endregion
     private void Sort(Vector3 playerPosition)
     {
-        for (var i = 0; i < focusables.Count; i++){
-            focusables[i].sortOrder = (focusables[i].transform.position - playerPosition).sqrMagnitude;
-        }
         focusables.Sort((a, b)=>{
             switch((a.CanBeFocused, b.CanBeFocused)){
                 case (false, false): return 0;
                 case (false, true): return 1;
                 case (true, false): return -1;
-                case (true, true): return (int)Mathf.Sign(a.sortOrder - b.sortOrder);
+                case (true, true):
+                    var placA = (a.transform.position - playerPosition).sqrMagnitude;
+                    var placB = (b.transform.position - playerPosition).sqrMagnitude;
+                    return (int)Mathf.Sign(placA - placB);
             }
         });
     }

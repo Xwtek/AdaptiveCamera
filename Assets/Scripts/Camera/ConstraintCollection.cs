@@ -30,7 +30,8 @@ public class ConstraintCollection
         }
         constraintDatas = cnst;
         return constraintDatas?.Slice(0,count);
-    }public NativeArray<ConstraintData> GetTempConstraintArray()
+    }
+    public NativeArray<ConstraintData> GetTempConstraintArray()
     {
         var count = 0;
         for (var i = 0; i < constraints.Count; i++)
@@ -61,6 +62,6 @@ public class ConstraintCollection
         constraints.Remove(constraint);
     }
     public void Dispose(){
-        if(constraintDatas.HasValue) constraintDatas.Value.Dispose();
+        constraintDatas?.Dispose();
     }
 }

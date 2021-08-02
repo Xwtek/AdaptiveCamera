@@ -20,6 +20,7 @@ namespace AdaptiveCamera.Algorithm
         NativeArray<OctreeNode> candidates;
 
         public float scale;
+        public bool onJob = true;
         public int maxPasses;
         public long worktimePerFrame;
         public long maxWork;
@@ -53,7 +54,7 @@ namespace AdaptiveCamera.Algorithm
         private JobHandle? jobHandle;
         public IEnumerator Run(float3 initialConfiguration, float3 playerPos, NativeSlice<ConstraintData> constraints)
         {
-            benchmarking.StartRound();
+            //benchmarking.StartRound();
             this.finished = false;
             this.cancel = false;
             this.priorityQueue.Initialize(
@@ -85,15 +86,25 @@ namespace AdaptiveCamera.Algorithm
                 allJob.scale = scale;
                 allJob.splitCount = splitCount;
                 allJob.delta = delta;
-                jobHandle = allJob.Schedule();
-                JobHandle.ScheduleBatchedJobs();
-                while (!jobHandle.Value.IsCompleted) if (frameWatch.ElapsedMilliseconds > worktimePerFrame)
+                if(onJob){
+                    jobHandle = allJob.Schedule();
+                    JobHandle.ScheduleBatchedJobs();
+                }else{
+                    jobHandle = null;
+                    allJob.Execute();
+                }
+                var cmpl = jobHandle?.IsCompleted ?? false;
+                while (!cmpl)
+                {
+                    if (frameWatch.ElapsedMilliseconds > worktimePerFrame)
                     {
                         yield return null;
                         if (cancel) break;
                         frameWatch.Restart();
                     }
-                jobHandle.Value.Complete();
+                    cmpl = jobHandle?.IsCompleted ?? true;
+                }
+                jobHandle?.Complete();
                 if (cancel) break;
                 if (newPlayerPos.HasValue)
                 {
@@ -113,7 +124,7 @@ namespace AdaptiveCamera.Algorithm
                 depth = Mathf.Max(Best.Value.pass, depth);
             }
             finished = true;
-            benchmarking.StopRound(evaluatedOctree, depth);
+            //benchmarking.StopRound(evaluatedOctree, depth);
             if (debug)
             {
                 debug.passes = Best.Value.pass;
@@ -140,6 +151,7 @@ namespace AdaptiveCamera.Algorithm
         }
         public void Initialize()
         {
+            LoadConfig();
             this.priorityQueue = new PriorityQueue(this.octreeCubesToBeExamined);
             this.candidates = new NativeArray<OctreeNode>(this.candidatesPerRound, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
         }
@@ -184,6 +196,7 @@ namespace AdaptiveCamera.Algorithm
             write:
                 if(Write && !string.IsNullOrEmpty(writeTo)){
                     using var file = new StreamWriter(writeTo);
+                    file.WriteLine("TimePerRound,OctreeEvaluated,Depth");
                     foreach(var data in datas){
                         file.Write(data.Item1);
                         file.Write(", ");
@@ -202,7 +215,53 @@ namespace AdaptiveCamera.Algorithm
                 if(stopwatch == null) stopwatch = new Stopwatch();
                 stopwatch.Start();
             }
+            public void Toggle(){
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    Test ^= true;
+                }
+                if(Input.GetKeyDown(KeyCode.I)){
+                    Test = false;
+                    Write = true;
+                }
+                if(!Test) stopwatch = null;
+            }
         }
-        public Benchmarking benchmarking = new Benchmarking();
+        //public Benchmarking benchmarking = new Benchmarking();
+        public string config;
+        public void LoadConfig(){
+            if(string.IsNullOrEmpty(config)) return;
+            using var stream = new StreamReader(config);
+            while(!stream.EndOfStream){
+                var line = stream.ReadLine().Split(':');
+                var value = line[1].Trim();
+                switch(line[0].Trim().ToLower()){
+                    case "scale":
+                        scale = float.Parse(value);
+                        break;
+                    case "worktimeperframe":
+                        worktimePerFrame = long.Parse(value);
+                        break;
+                    case "maxWork":
+                        maxWork = long.Parse(value);
+                        break;
+                    case "octreecubestobeexamined":
+                        octreeCubesToBeExamined = int.Parse(value);
+                        break;
+                    case "maxpasses":
+                        maxPasses = int.Parse(value);
+                        break;
+                    case "candidatesperround":
+                        candidatesPerRound = int.Parse(value);
+                        break;
+                    case "size":
+                        size = float.Parse(value);
+                        break;
+                    case "onjob":
+                        onJob = bool.Parse(value);
+                        break;
+                }
+            }
+        }
     }
 }

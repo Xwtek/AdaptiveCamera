@@ -32,6 +32,7 @@ public class AdaptiveCameraBrain : CameraController
         coroutine.Initialize();
         constraints.Register(focusables);
     }
+    //public void Update() { coroutine.benchmarking.Toggle(); }
     public override void OnCameraUpdate()
     {
         var justProcessed = false;
@@ -46,7 +47,7 @@ public class AdaptiveCameraBrain : CameraController
                 cameraUsed.transform.position,
                 player.position,
                 constraintArray.Value));
-            smoothing.StartRound(NoahController.Instance.reference.position - transform.position);
+            //smoothing.StartRound(NoahController.Instance.reference.position - transform.position);
         }
         coroutine.accumulatedTime += Time.deltaTime;
         if (!justProcessed)
@@ -63,7 +64,7 @@ public class AdaptiveCameraBrain : CameraController
             miliPerRound.Update(coroutine.accumulatedTime);
             coroutine.accumulatedTime = 0;
             processed = true;
-            smoothing.StopRound(NoahController.Instance.reference.position - transform.position);
+            //smoothing.StopRound(NoahController.Instance.reference.position - transform.position);
         }
     }
     public void OnDestroy()
@@ -83,6 +84,12 @@ public class AdaptiveCameraBrain : CameraController
     protected override void OnCameraDisabled()
     {
         coroutine.Cancel();
+    }
+    public void ResetCamera()
+    {
+        coroutine.Cancel();
+        if (followCamera != null) followCamera.ResetOffset();
+        processed = true;
     }
 
     public static AdaptiveCameraBrain Instance { get; private set; }
@@ -124,5 +131,5 @@ public class AdaptiveCameraBrain : CameraController
                 this.origin = origin;
             }
         }
-        public Smoothing smoothing = new Smoothing();
+        //public Smoothing smoothing = new Smoothing();
 }
